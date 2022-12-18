@@ -24,14 +24,65 @@ export async function postUrls(req,res){
         console.log(err.message);
         return res.status(500).send('Server not running');
     }
-};1
+};
 
 export async function getUrls(req,res){
 
+    const {id} = req.params;
+
+    try{
+
+        const body = await connection.query(`
+        SELECT 
+            urls.user_id, urls.short_url, urls.url
+        FROM
+            urls
+        WHERE
+            id=$1`, [id]);
+
+        res.send(body.rows[0]).status(200)
+
+    } catch (err){
+        console.log(err.message);
+        return res.status(500).send('Server not running');
+    }
 };
 
 export async function getUrlsOpen(req,res){
+    
+    const {shortUrl} = req.params;
 
+    try{
+
+        const count = await connection.query(`SELECT visit_count FROM urls WHERE short_url=$1;`, 
+        [shortUrl]);
+        const newCount = Number(count.rows[0].visit_count) + 1;
+
+        console.log("oi")
+
+        await connection.query(`
+            UPDATE 
+                urls 
+            SET 
+                visit_count=$1 
+            WHERE 
+                short_url=$2;`,[newCount, shortUrl]);
+
+        const url = await connection.query(`
+            SELECT 
+                 urls.url
+            FROM
+                urls
+            WHERE
+                short_url=$1;`, [shortUrl]);
+
+        
+        return res.redirect(url.rows[0]);
+
+    } catch (err){
+        console.log(err.message);
+        return res.status(500).send('Server not running');
+    }
 };
 
 export async function deleteUrls(req,res){
