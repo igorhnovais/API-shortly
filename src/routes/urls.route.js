@@ -3,7 +3,9 @@ const router = Router();
 
 import { postUrls, getUrls, getUrlsOpen, deleteUrls } from "../controllers/urls.controller.js";
 
-router.post("/urls/shorten", postUrls);
+import { postUrlsValidation } from "../middleware/postUrlsValidation.middleware.js";
+
+router.post("/urls/shorten", postUrlsValidation, postUrls);
 
 router.get("/urls/:id", getUrls);
 

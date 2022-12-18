@@ -40,5 +40,5 @@ export async function postSignIn(req,res){
 };
 
 export async function getUsers(req,res){
-
+    
 };
