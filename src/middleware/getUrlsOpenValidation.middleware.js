@@ -10,7 +10,7 @@ export async function getUrlsOpenValidation(req, res, next){
         [shortUrl]);
         
         if(short.rowCount === 0){
-            res.sendStatus(404);
+            return res.sendStatus(404);
         }
 
     } catch (err){

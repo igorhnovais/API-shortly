@@ -58,15 +58,6 @@ export async function getUrlsOpen(req,res){
         [shortUrl]);
         const newCount = Number(count.rows[0].visit_count) + 1;
 
-        console.log("oi")
-
-        await connection.query(`
-            UPDATE 
-                urls 
-            SET 
-                visit_count=$1 
-            WHERE 
-                short_url=$2;`,[newCount, shortUrl]);
 
         const url = await connection.query(`
             SELECT 
@@ -74,14 +65,24 @@ export async function getUrlsOpen(req,res){
             FROM
                 urls
             WHERE
-                short_url=$1;`, [shortUrl]);
+                short_url=$1;`, 
+            [shortUrl]);
 
-        
-        return res.redirect(url.rows[0]);
+
+            await connection.query(`
+            UPDATE 
+                urls 
+            SET 
+                visit_count=$1 
+            WHERE 
+                short_url=$2;`,[newCount, shortUrl]);
+
+        const urlRedirected = url.rows[0].url
+        return res.redirect(urlRedirected);
 
     } catch (err){
         console.log(err.message);
-        return res.status(500).send('Server not running');
+        res.status(500).send('Server not running');
     }
 };
 
