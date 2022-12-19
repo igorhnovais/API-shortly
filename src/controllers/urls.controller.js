@@ -17,8 +17,11 @@ export async function postUrls(req,res){
 
 
         await connection.query('INSERT INTO urls (user_id, url, short_url, visit_count) VALUES ($1, $2, $3, $4);', 
-        [idUser, url, shortUrl, 0])
-        res.sendStatus(201);
+        [idUser, url, shortUrl, 0]);
+
+        const body = await connection.query('SELECT urls.short_url AS "shortUrl" FROM urls WHERE url=$1', 
+        [url]);
+        res.send(body.rows[0]).status(201);
 
     } catch (err){
         console.log(err.message);
