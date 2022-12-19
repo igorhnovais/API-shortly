@@ -40,5 +40,29 @@ export async function postSignIn(req,res){
 };
 
 export async function getUsers(req,res){
+
+    const id = req.idUser;
+
+    try{
+
+    const user = await connection.query(`
+        SELECT 
+        users.id, users.name, sum(urls.visit_count) AS "visitCount",
+        JSON_AGG(JSON_BUILD_OBJECT(
+            'id', urls.id, 'shortUrl', urls.short_url,'url', urls.url, 'visitCount',urls.visit_count)
+            ) AS "shortedUrls"
+        FROM users
+        JOIN urls
+        ON urls.user_id = users.id
+        WHERE users.id=$1
+        GROUP BY users.id
+        ;`, [id]);
+
+    res.status(200).send(user.rows[0]);
+
+    } catch (err){
+        console.log(err.message);
+        res.status(500).send('Server not running');
+    }
     
 };
