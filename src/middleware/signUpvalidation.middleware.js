@@ -18,6 +18,7 @@ export async function signUpValidation (req, res, next){
         if (userExists.rowCount > 0){
             return res.sendStatus(409);
         };
+        
     } catch (err){
         console.log(err.message);
         res.status(500).send('Server not running');
