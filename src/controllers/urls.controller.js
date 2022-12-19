@@ -37,7 +37,9 @@ export async function getUrls(req,res){
 
         const body = await connection.query(`
         SELECT 
-            urls.user_id, urls.short_url, urls.url
+            urls.user_id AS id, 
+            urls.short_url AS "shortUrl",
+            urls.url
         FROM
             urls
         WHERE
