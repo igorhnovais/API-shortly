@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import { customAlphabet } from 'nanoid'
 
 import { connection } from "../database/db.js";
@@ -21,7 +20,7 @@ export async function postUrls(req,res){
 
         const body = await connection.query('SELECT urls.short_url AS "shortUrl" FROM urls WHERE url=$1', 
         [url]);
-        res.send(body.rows[0]).status(201);
+        res.status(201).send(body.rows[0]);
 
     } catch (err){
         console.log(err.message);
