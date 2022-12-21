@@ -59,10 +59,15 @@ export async function getUsers(req,res){
 
     const user = await connection.query(`
         SELECT 
-        users.id, users.name, sum(urls.visit_count) AS "visitCount",
-        JSON_AGG(JSON_BUILD_OBJECT(
-            'id', urls.id, 'shortUrl', urls.short_url,'url', urls.url, 'visitCount',urls.visit_count)
-            ) AS "shortedUrls"
+        users.id, users.name, 
+        COALESCE(sum(urls.visit_count), 0):: INTEGER AS "visitCount",
+        COALESCE(ARRAY_AGG(JSON_BUILD_OBJECT(
+            'id', urls.id, 
+            'shortUrl', urls.short_url,
+            'url', urls.url, 
+            'visitCount',urls.visit_count) 
+            ORDER BY urls.id) 
+            FILTER (where urls.id is not null), ARRAY[]::json[]) AS "shortedUrls"
         FROM users
         LEFT JOIN urls
         ON urls.user_id = users.id
