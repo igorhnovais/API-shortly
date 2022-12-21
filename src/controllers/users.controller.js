@@ -35,13 +35,15 @@ export async function postSignIn(req,res){
         if( userSessions.rowCount === 0){
 
             await connection.query('INSERT INTO sessions (user_id, token) VALUES ($1, $2);', [idUser.rows[0].id, token]);
-            return res.sendStatus(200);
 
         } else {
 
             await connection.query('UPDATE sessions SET token=$1 WHERE user_id=$2', [token, idUser.rows[0].id]);
-            return res.sendStatus(200);
+            
         }
+
+        const usertoken = await connection.query('SELECT * FROM sessions WHERE user_id=$1', [idUser.rows[0].id]);
+        return res.status(200).send(usertoken.rows[0].token);
 
     } catch (err){
         console.log(err.message);
