@@ -64,7 +64,7 @@ export async function getUsers(req,res){
             'id', urls.id, 'shortUrl', urls.short_url,'url', urls.url, 'visitCount',urls.visit_count)
             ) AS "shortedUrls"
         FROM users
-        JOIN urls
+        LEFT JOIN urls
         ON urls.user_id = users.id
         WHERE users.id=$1
         GROUP BY users.id
