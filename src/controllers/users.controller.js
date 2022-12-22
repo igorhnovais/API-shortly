@@ -60,7 +60,7 @@ export async function getUsers(req,res){
     const user = await connection.query(`
         SELECT 
         users.id, users.name, 
-        COALESCE(sum(urls.visit_count), 0):: INTEGER AS "visitCount",
+        COALESCE(sum(urls.visit_count), 0)::INTEGER AS "visitCount",
         COALESCE(ARRAY_AGG(JSON_BUILD_OBJECT(
             'id', urls.id, 
             'shortUrl', urls.short_url,
